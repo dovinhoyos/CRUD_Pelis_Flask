@@ -30,6 +30,7 @@ Se ha diseñado siguiendo las **mejores prácticas de arquitectura de software**
 
 Una mirada a la organización lógica y limpia del proyecto:
 
+```
 CRUD_Pelis_Flask/
 ├── .env # ⚠️ Archivo con variables de entorno (¡NO SUBIR A GIT!)
 ├── .gitignore # Reglas para ignorar archivos en Git
@@ -45,6 +46,8 @@ CRUD_Pelis_Flask/
 │ ├── genero.py # Blueprints y rutas para la gestión de Géneros
 │ └── pelicula.py # Blueprints y rutas para la gestión de Películas
 └── requirements.txt # Listado de todas las dependencias del proyecto
+
+```
 
 ## ⚙️ Configuración y Puesta en Marcha
 
@@ -88,32 +91,38 @@ Desde el directorio raíz de tu proyecto (`my_flask_app/`), instala todas las li
 ```bash
 pip install -r requirements.txt
 
+```
+
 5. Ejecución de la Aplicación
 
 Con todos los requisitos y configuraciones listos, inicia el servidor Flask:
 Bash
 
+```
 python app.py
 
-El servidor estará operativo en http://127.0.0.1:5400/. Al primer inicio, Flask-SQLAlchemy creará automáticamente las tablas generos y peliculas en tu base de datos gestionpeliculas.
+```
+
+El servidor estará operativo en <http://127.0.0.1:5400/>. Al primer inicio, Flask-SQLAlchemy creará automáticamente las tablas generos y peliculas en tu base de datos gestionpeliculas.
 
 🧪 Endpoints Disponibles (Ejemplos con curl)
 
 Aquí una guía rápida para interactuar con tu API.
 
-Ruta Base: http://localhost:5400/
+Ruta Base: <http://localhost:5400/>
 
 📊 /generos (Gestión de Géneros)
 
     POST /generos/: Crear un nuevo género.
     Bash
 
-curl -X POST http://localhost:5400/generos/ -H 'Content-Type: application/json' -d '{"genNombre": "Ciencia Ficción"}'
+    curl -X POST http://localhost:5400/generos/
+    -H 'Content-Type: application/json' -d '{"genNombre": "Ciencia Ficción"}'
 
 GET /generos/: Listar todos los géneros.
 Bash
 
-curl -X GET http://localhost:5400/generos/
+    curl -X GET http://localhost:5400/generos/
 
 GET /generos/{id}: Obtener un género por su ID.
 Bash
@@ -122,11 +131,13 @@ Bash
 
 🎬 /peliculas (Gestión de Películas)
 
-    POST /peliculas/: Crear una nueva película.
+POST /peliculas/: Crear una nueva película.
 
-        Importante: Asegúrate de que el pelGenero corresponda a un idGenero existente en tu base de datos (crea uno con el endpoint de géneros primero si es necesario).
-    Bash
+Importante: Asegúrate de que el pelGenero corresponda a un idGenero existente en tu base de datos (crea uno con el endpoint de géneros primero si es necesario).
 
+Bash
+
+```
 curl -X POST http://localhost:5400/peliculas/ -H 'Content-Type: application/json' -d '{
     "pelCodigo": "INT001",
     "pelTitulo": "Interstellar",
@@ -135,12 +146,14 @@ curl -X POST http://localhost:5400/peliculas/ -H 'Content-Type: application/json
     "pelResumen": "Un equipo de exploradores viaja a través de un agujero de gusano para asegurar la supervivencia de la humanidad.",
     "pelFoto": "interstellar.jpg",
     "pelGenero": 1
-}'
+}
+```
 
 GET /peliculas/: Listar todas las películas.
+
 Bash
 
-curl -X GET http://localhost:5400/peliculas/
+    curl -X GET http://localhost:5400/peliculas/
 
 GET /peliculas/{id}: Obtener una película por su ID.
 Bash
@@ -166,4 +179,3 @@ Bash
 📄 Licencia
 
 Este proyecto está distribuido bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
-```
