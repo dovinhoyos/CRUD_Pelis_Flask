@@ -148,3 +148,95 @@ def obtener_pelicula_por_id(pelicula_id):
         else None,
     }
     return jsonify(pelicula_data), 200
+
+
+@pelicula_bp.route("/<int:pelicula_id>", methods=["PUT"])
+def actualizar_pelicula(pelicula_id):
+    """
+    Actualiza una película existente por su ID.
+    Requiere un JSON con los campos a actualizar.
+    """
+    try:
+        pelicula = Pelicula.query.get(pelicula_id)
+        if not pelicula:
+            return jsonify({"mensaje": "Película no encontrada"}), 404
+
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No se proporcionaron datos para actualizar"}), 400
+
+        # Iterar sobre los datos recibidos y actualizar los atributos de la película
+        # Asegúrate de que los nombres de los campos en el JSON coincidan con los atributos del modelo
+        for field, value in data.items():
+            if hasattr(pelicula, field):  # Verifica si el atributo existe en el modelo
+                if field == "pelGenero":  # Validación especial para la clave foránea
+                    genero_existente = Genero.query.get(value)
+                    if not genero_existente:
+                        return jsonify(
+                            {"error": "El ID de género proporcionado no existe"}
+                        ), 400
+                setattr(pelicula, field, value)  # Actualiza el atributo
+
+        db.session.commit()  # Guarda los cambios en la base de datos
+
+        return jsonify(
+            {
+                "mensaje": "Película actualizada exitosamente",
+                "idPelicula": pelicula.idPelicula,
+                "titulo": pelicula.pelTitulo,
+            }
+        ), 200  # 200 OK
+
+    except exc.IntegrityError:
+        db.session.rollback()  # Deshacer la transacción en caso de error de unicidad (ej. pelCodigo duplicado)
+        current_app.logger.error(
+            "Error de integridad al actualizar película (código duplicado o FK inválida)."
+        )
+        return jsonify(
+            {
+                "error": "Error de datos: El código de película ya existe o el ID de género es inválido."
+            }
+        ), 409
+    except exc.SQLAlchemyError as error:
+        db.session.rollback()
+        current_app.logger.error(
+            f"Error de SQLAlchemy al actualizar película: {str(error)}"
+        )
+        return jsonify(
+            {"error": "Error interno del servidor al actualizar película"}
+        ), 500
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error inesperado al actualizar película: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
+
+@pelicula_bp.route("/<int:pelicula_id>", methods=["DELETE"])
+def eliminar_pelicula(pelicula_id):
+    """
+    Elimina una película por su ID.
+    """
+    try:
+        pelicula = Pelicula.query.get(pelicula_id)
+        if not pelicula:
+            return jsonify({"mensaje": "Película no encontrada"}), 404
+
+        db.session.delete(pelicula)  # Marca el objeto para ser eliminado
+        db.session.commit()  # Confirma la eliminación en la base de datos
+
+        return jsonify(
+            {"mensaje": "Película eliminada exitosamente", "idPelicula": pelicula_id}
+        ), 200  # 200 OK
+
+    except exc.SQLAlchemyError as error:
+        db.session.rollback()  # Siempre hacer rollback en caso de error
+        current_app.logger.error(
+            f"Error de SQLAlchemy al eliminar película: {str(error)}"
+        )
+        return jsonify(
+            {"error": "Error interno del servidor al eliminar película"}
+        ), 500
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error inesperado al eliminar película: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
