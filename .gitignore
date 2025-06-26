@@ -1,0 +1,35 @@
+# .gitignore
+
+# Archivos de entorno sensibles
+.env
+
+# Directorios de entorno virtual
+.venv/
+venv/
+env/
+
+# Archivos de caché y compilados de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python/
+
+# Archivos de depuración y registro
+*.log
+*.sqlite3 # Si usaras SQLite temporalmente
+debug.log
+.flaskenv # Si usaras Flask-DotEnv para otras cosas
+
+# Archivos y directorios específicos de IDEs
+.idea/  # PyCharm
+.vscode/ # VS Code
+*.sublime-project
+*.sublime-workspace
+
+# Archivos específicos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Otros archivos generados
+instance/ 

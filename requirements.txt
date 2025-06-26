@@ -1,0 +1,5 @@
+Flask==2.3.2
+Flask-SQLAlchemy==3.0.5
+PyMySQL==1.1.0
+cryptography==41.0.3 # Importante para métodos de autenticación de MySQL 8+
+python-dotenv==1.0.0
